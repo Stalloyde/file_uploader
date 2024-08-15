@@ -1,13 +1,13 @@
-exports.signup = (req, res, next) => {
-  res.send('POST signup Page');
-};
+const { PrismaClient } = require('@prisma/client');
+const passport = require('passport');
+const expressAsyncHandler = require('express-async-handler');
+const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
 
-exports.login = (req, res, next) => {
-  res.send('POST Login Page');
-};
+const prisma = new PrismaClient();
 
 exports.homepage = (req, res, next) => {
-  res.send('Load Homepage');
+  res.json('Load Homepage');
 };
 
 exports.createFolder = (req, res, next) => {
