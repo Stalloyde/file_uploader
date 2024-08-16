@@ -17,14 +17,26 @@ model User {
   id        Int     @id @default(autoincrement())
   username  String  @unique
   password  String
-  files     Files[]
+  file     File[]
+  folder   Folder[]
 }
 
-model Files {
+model File {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
   fileName  String    @unique
   filePath  String  
   user      User      @relation(fields: [userId], references: [id])
-  userId    Int       @unique
+  userId    Int       
+  folder    Folder    @relation(fields: [folderId], references: [id])
+  folderId  Int       
+}
+
+model Folder {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  folderName  String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int       
+  file        File[]
 }
