@@ -1,19 +1,57 @@
-exports.folderGET = (req, res) => {
-  res.send('Load folder page');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+exports.allFoldersGET = async (req, res) => {
+  try {
+    const allFolders = await prisma.folder.findMany({
+      where: { userId: req.user.id },
+      orderBy: { folderName: 'asc' },
+    });
+    return res.json(allFolders);
+  } catch (err) {
+    return res.json(err);
+  }
+};
+
+exports.folderGET = async (req, res) => {
+  const targetId = parseInt(req.params.folderId);
+
+  try {
+    const [filesInTargetFolder, targetFolder] = await prisma.$transaction([
+      prisma.file.findMany({
+        where: { folderId: targetId },
+        orderBy: { fileName: 'asc' },
+      }),
+      prisma.folder.findUnique({
+        where: { id: targetId },
+      }),
+    ]);
+
+    return res.json({
+      filesInTargetFolder,
+      targetFolder,
+    });
+  } catch (err) {
+    return res.json(err);
+  }
+};
+
+exports.createFolder = (req, res) => {
+  res.json('Create folder');
 };
 
 exports.fileInFolderGET = (req, res) => {
-  res.send('Load file in folder page');
+  res.json('Load file in folder page');
 };
 
 exports.createFileInFolder = (req, res) => {
-  res.send('Create file in folder');
+  res.json('Create file in folder');
 };
 
 exports.editFileInFolder = (req, res) => {
-  res.send('Edit file in folder');
+  res.json('Edit file in folder');
 };
 
 exports.deleteFileInFolder = (req, res) => {
-  res.send('Delete file in folder');
+  res.json('Delete file in folder');
 };

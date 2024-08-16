@@ -48,7 +48,7 @@ app.use(passport.session());
 app.use('/', homeRouter);
 app.use('/signup', signUpRouter);
 app.use('/login', logInRouter);
-app.use('/folder/:folderId', folderRouter);
-app.use('/file/:fileId', fileRouter);
+app.use('/folders', folderRouter);
+app.use('/files', fileRouter);
 
 module.exports = app;
