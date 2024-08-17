@@ -3,8 +3,8 @@ const expressAsyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
 exports.login = [
-  body('username').trim().escape(),
-  body('password').trim().escape(),
+  body('username').trim().notEmpty().escape(),
+  body('password').trim().notEmpty().escape(),
 
   expressAsyncHandler(async (req, res, next) => {
     const errors = validationResult(req);

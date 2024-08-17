@@ -7,8 +7,8 @@ const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
 exports.signup = [
-  body('username').notEmpty().trim().escape().withMessage('*Username required'),
-  body('password').notEmpty().trim().escape().withMessage('*Password required'),
+  body('username').trim().notEmpty().escape().withMessage('*Username required'),
+  body('password').trim().notEmpty().escape().withMessage('*Password required'),
   body('confirmPassword')
     .notEmpty()
     .trim()
