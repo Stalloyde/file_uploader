@@ -23,6 +23,7 @@ exports.targetFileGET = async (req, res, next) => {
         user: {
           select: { username: true },
         },
+        folder: true,
       },
     });
     targetFile.createdAt = format(
