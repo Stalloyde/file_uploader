@@ -30,8 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(
   session({
     secret: process.env.SECRET,
@@ -51,4 +51,13 @@ app.use('/login', logInRouter);
 app.use('/folders', folderRouter);
 app.use('/files', fileRouter);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  console.log(err);
+  if (err.code === 'P2002') {
+    return res.json({ errors: [{ msg: '*Name is taken. Try another.' }] });
+  } else {
+    throw new Error('*Something went wrong.');
+  }
+});
 module.exports = app;

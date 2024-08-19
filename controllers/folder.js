@@ -4,38 +4,30 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.allFoldersGET = async (req, res) => {
-  try {
-    const allFolders = await prisma.folder.findMany({
-      where: { userId: req.user.id },
-      orderBy: { folderName: 'asc' },
-    });
-    return res.json(allFolders);
-  } catch (err) {
-    return res.json(err);
-  }
+  const allFolders = await prisma.folder.findMany({
+    where: { userId: req.user.id },
+    orderBy: { folderName: 'asc' },
+  });
+  return res.json(allFolders);
 };
 
 exports.folderGET = async (req, res) => {
   const targetId = parseInt(req.params.folderId);
 
-  try {
-    const [filesInTargetFolder, targetFolder] = await prisma.$transaction([
-      prisma.file.findMany({
-        where: { folderId: targetId },
-        orderBy: { fileName: 'asc' },
-      }),
-      prisma.folder.findUnique({
-        where: { id: targetId },
-      }),
-    ]);
+  const [filesInTargetFolder, targetFolder] = await prisma.$transaction([
+    prisma.file.findMany({
+      where: { folderId: targetId },
+      orderBy: { fileName: 'asc' },
+    }),
+    prisma.folder.findUnique({
+      where: { id: targetId },
+    }),
+  ]);
 
-    return res.json({
-      filesInTargetFolder,
-      targetFolder,
-    });
-  } catch (err) {
-    return res.json(err);
-  }
+  return res.json({
+    filesInTargetFolder,
+    targetFolder,
+  });
 };
 
 exports.createFolder = [
@@ -78,8 +70,7 @@ exports.editFolder = [
       where: { id: req.body.targetFolder.id },
       data: { folderName: req.body.newFolderName },
     });
-
-    res.json(updatedFolder);
+    return res.json(updatedFolder);
   }),
 ];
 
