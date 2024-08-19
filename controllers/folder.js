@@ -61,6 +61,28 @@ exports.createFolder = [
   }),
 ];
 
+exports.editFolder = [
+  body('newFolderName')
+    .trim()
+    .notEmpty()
+    .escape()
+    .withMessage('*Input cannot be empty or only whitespace'),
+
+  expressAsyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.json({ errors: errors.array() });
+    }
+
+    const updatedFolder = await prisma.folder.update({
+      where: { id: req.body.targetFolder.id },
+      data: { folderName: req.body.newFolderName },
+    });
+
+    res.json(updatedFolder);
+  }),
+];
+
 exports.fileInFolderGET = (req, res) => {
   res.json('Load file in folder page');
 };
@@ -70,6 +92,7 @@ exports.createFileInFolder = (req, res) => {
 };
 
 exports.editFileInFolder = (req, res) => {
+  console.log('asodnasodanskodn');
   res.json('Edit file in folder');
 };
 
