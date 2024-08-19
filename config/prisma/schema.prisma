@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -28,8 +29,8 @@ model File {
   filePath  String  
   user      User      @relation(fields: [userId], references: [id])
   userId    Int       
-  folder    Folder    @relation(fields: [folderId], references: [id])
-  folderId  Int       
+  folder    Folder    @relation(fields: [folderId], references: [id], onDelete:Cascade)
+  folderId  Int         
 }
 
 model Folder {
@@ -38,5 +39,5 @@ model Folder {
   folderName  String    @unique
   user        User      @relation(fields: [userId], references: [id])
   userId      Int       
-  file        File[]
+  file        File[]    
 }
