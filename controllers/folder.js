@@ -74,6 +74,21 @@ exports.editFolder = [
   }),
 ];
 
+exports.deleteFolder = [
+  expressAsyncHandler(async (req, res) => {
+    console.log(req.body.targetFolder);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.json({ errors: errors.array() });
+    }
+
+    await prisma.folder.delete({
+      where: { id: req.body.targetFolder.id },
+    });
+    return res.json('Deleted');
+  }),
+];
+
 exports.fileInFolderGET = (req, res) => {
   res.json('Load file in folder page');
 };
