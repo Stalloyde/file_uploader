@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { format } = require('date-fns');
 const expressAsyncHandler = require('express-async-handler');
+const { deleteImage } = require('../config/cloudinary');
 
 exports.allFilesGET = expressAsyncHandler(async (req, res) => {
   try {
@@ -41,6 +42,20 @@ exports.editFile = (req, res) => {
   res.json('Edit file');
 };
 
-exports.deleteFile = (req, res) => {
-  res.json('Delete file');
-};
+exports.deleteFile = expressAsyncHandler(async (req, res) => {
+  const targetFileId = Number(req.params.fileId);
+  const { public_id } = await prisma.file.findUnique({
+    where: { id: targetFileId },
+    select: {
+      public_id: true,
+    },
+  });
+
+  await Promise.all([
+    prisma.file.delete({
+      where: { id: targetFileId },
+    }),
+    deleteImage(public_id),
+  ]);
+  res.json('Deleted file');
+});
