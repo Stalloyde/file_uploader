@@ -4,7 +4,6 @@ const file = require('../controllers/file.js');
 const { isAuth } = require('./isAuth');
 
 router.get('/', isAuth, file.allFilesGET);
-router.post('/create', isAuth, file.createFile);
 router.get('/:fileId', isAuth, file.targetFileGET);
 router.put('/:fileId/edit', isAuth, file.editFile);
 router.delete('/:fileId/delete', isAuth, file.deleteFile);

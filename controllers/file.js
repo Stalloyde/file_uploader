@@ -1,8 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { format } = require('date-fns');
+const expressAsyncHandler = require('express-async-handler');
 
-exports.allFilesGET = async (req, res, next) => {
+exports.allFilesGET = expressAsyncHandler(async (req, res) => {
   try {
     const allFiles = await prisma.file.findMany({
       where: { userId: req.user.id },
@@ -12,9 +13,9 @@ exports.allFilesGET = async (req, res, next) => {
   } catch (err) {
     return res.json(err);
   }
-};
+});
 
-exports.targetFileGET = async (req, res, next) => {
+exports.targetFileGET = expressAsyncHandler(async (req, res) => {
   const targetId = Number(req.params.fileId);
   try {
     const targetFile = await prisma.file.findUnique({
@@ -34,16 +35,12 @@ exports.targetFileGET = async (req, res, next) => {
   } catch (err) {
     return res.json(err);
   }
-};
+});
 
-exports.createFile = (req, res, next) => {
-  res.json('Create file');
-};
-
-exports.editFile = (req, res, next) => {
+exports.editFile = (req, res) => {
   res.json('Edit file');
 };
 
-exports.deleteFile = (req, res, next) => {
+exports.deleteFile = (req, res) => {
   res.json('Delete file');
 };
