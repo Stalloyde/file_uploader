@@ -2,16 +2,17 @@ const expressAsyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const upload = require('../config/cloudinary');
 
-exports.allFoldersGET = async (req, res) => {
+exports.allFoldersGET = expressAsyncHandler(async (req, res) => {
   const allFolders = await prisma.folder.findMany({
     where: { userId: req.user.id },
     orderBy: { folderName: 'asc' },
   });
   return res.json(allFolders);
-};
+});
 
-exports.folderGET = async (req, res) => {
+exports.folderGET = expressAsyncHandler(async (req, res) => {
   const targetId = parseInt(req.params.folderId);
 
   const [filesInTargetFolder, targetFolder] = await prisma.$transaction([
@@ -28,7 +29,7 @@ exports.folderGET = async (req, res) => {
     filesInTargetFolder,
     targetFolder,
   });
-};
+});
 
 exports.createFolder = [
   body('newFolderName')
@@ -76,7 +77,6 @@ exports.editFolder = [
 
 exports.deleteFolder = [
   expressAsyncHandler(async (req, res) => {
-    console.log(req.body.targetFolder);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.json({ errors: errors.array() });
@@ -93,9 +93,21 @@ exports.fileInFolderGET = (req, res) => {
   res.json('Load file in folder page');
 };
 
-exports.createFileInFolder = (req, res) => {
-  res.json('Create file in folder');
-};
+exports.createFileInFolder = expressAsyncHandler(async (req, res) => {
+  if (req.file) {
+    const uploadedFile = await upload(req.file.path);
+
+    const newFile = await prisma.file.create({
+      data: {
+        fileName: req.file.originalname,
+        filePath: uploadedFile.url,
+        userId: req.user.id,
+        folderId: Number(req.params.folderId),
+      },
+    });
+    res.json(`Created ${newFile.fileName} in ${req.params.folderId}`);
+  }
+});
 
 exports.editFileInFolder = (req, res) => {
   console.log('asodnasodanskodn');

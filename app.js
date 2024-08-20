@@ -57,7 +57,9 @@ app.use((err, req, res, next) => {
   if (err.code === 'P2002') {
     return res.json({ errors: [{ msg: '*Name is taken. Try another.' }] });
   } else {
-    throw new Error('*Something went wrong.');
+    return res.json({
+      errors: [{ msg: '*Something went wrong. Refresh page and try again.' }],
+    });
   }
 });
 module.exports = app;
