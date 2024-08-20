@@ -77,11 +77,6 @@ exports.editFolder = [
 
 exports.deleteFolder = [
   expressAsyncHandler(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.json({ errors: errors.array() });
-    }
-
     const associatedFiles = await prisma.file.findMany({
       where: { folderId: req.body.targetFolder.id },
       select: {
@@ -89,7 +84,7 @@ exports.deleteFolder = [
       },
     });
 
-    const toDeleteIds = associatedFiles
+    const public_ids = associatedFiles
       .map((file) => {
         if (file.public_id !== null) return file.public_id;
       })
@@ -99,10 +94,10 @@ exports.deleteFolder = [
       prisma.folder.delete({
         where: { id: req.body.targetFolder.id },
       }),
-      deleteImages(toDeleteIds),
+      deleteImages(public_ids),
     ]);
 
-    return res.json('Deleted');
+    return res.json('Deleted folder');
   }),
 ];
 
