@@ -2,7 +2,7 @@ const expressAsyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const upload = require('../config/cloudinary');
+const { uploadImage, deleteImages } = require('../config/cloudinary');
 
 exports.allFoldersGET = expressAsyncHandler(async (req, res) => {
   const allFolders = await prisma.folder.findMany({
@@ -82,9 +82,26 @@ exports.deleteFolder = [
       return res.json({ errors: errors.array() });
     }
 
-    await prisma.folder.delete({
-      where: { id: req.body.targetFolder.id },
+    const associatedFiles = await prisma.file.findMany({
+      where: { folderId: req.body.targetFolder.id },
+      select: {
+        public_id: true,
+      },
     });
+
+    const toDeleteIds = associatedFiles
+      .map((file) => {
+        if (file.public_id !== null) return file.public_id;
+      })
+      .filter((elem) => elem !== undefined);
+
+    await Promise.all([
+      prisma.folder.delete({
+        where: { id: req.body.targetFolder.id },
+      }),
+      deleteImages(toDeleteIds),
+    ]);
+
     return res.json('Deleted');
   }),
 ];
@@ -95,7 +112,7 @@ exports.fileInFolderGET = (req, res) => {
 
 exports.createFileInFolder = expressAsyncHandler(async (req, res) => {
   if (req.file) {
-    const uploadedFile = await upload(req.file.path);
+    const uploadedFile = await uploadImage(req.file.path);
 
     const newFile = await prisma.file.create({
       data: {
@@ -103,6 +120,7 @@ exports.createFileInFolder = expressAsyncHandler(async (req, res) => {
         filePath: uploadedFile.url,
         userId: req.user.id,
         folderId: Number(req.params.folderId),
+        public_id: uploadedFile.public_id,
       },
     });
     res.json(`Created ${newFile.fileName} in ${req.params.folderId}`);
