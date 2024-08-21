@@ -17,10 +17,7 @@ const fileRouter = require('./routes/file');
 const app = express();
 
 const corsOptions = {
-  origin: [
-    //add production url
-    'http://localhost:5173',
-  ],
+  origin: ['https://file-uploader-client.vercel.app/', 'http://localhost:5173'],
   optionsSuccessStatus: 200,
   credentials: true,
 };
