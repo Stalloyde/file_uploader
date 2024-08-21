@@ -48,8 +48,8 @@ app.use(passport.session());
 app.use('/', homeRouter);
 app.use('/signup', signUpRouter);
 app.use('/login', logInRouter);
-app.use('/folders', folderRouter);
-app.use('/files', fileRouter);
+app.use('/folder', folderRouter);
+app.use('/file', fileRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
