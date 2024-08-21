@@ -16,8 +16,5 @@ router.post(
   upload.single('newFile'),
   folder.createFileInFolder,
 );
-router.get('/:folderId/:fileId', isAuth, folder.fileInFolderGET);
-router.put('/:folderId/:fileId/edit', isAuth, folder.editFileInFolder);
-router.delete('/:folderId/:fileId/delete', isAuth, folder.deleteFileInFolder);
 
 module.exports = router;

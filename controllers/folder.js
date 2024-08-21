@@ -101,10 +101,6 @@ exports.deleteFolder = [
   }),
 ];
 
-exports.fileInFolderGET = (req, res) => {
-  res.json('Load file in folder page');
-};
-
 exports.createFileInFolder = expressAsyncHandler(async (req, res) => {
   if (req.file) {
     const uploadedFile = await uploadImage(req.file.path);
@@ -121,12 +117,3 @@ exports.createFileInFolder = expressAsyncHandler(async (req, res) => {
     res.json(`Created ${newFile.fileName} in ${req.params.folderId}`);
   }
 });
-
-exports.editFileInFolder = (req, res) => {
-  console.log('asodnasodanskodn');
-  res.json('Edit file in folder');
-};
-
-exports.deleteFileInFolder = (req, res) => {
-  res.json('Delete file in folder');
-};
