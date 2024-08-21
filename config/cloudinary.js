@@ -42,4 +42,18 @@ const deleteImages = async (public_ids) => {
   }
 };
 
-module.exports = { uploadImage, deleteImages };
+const deleteImage = async (public_id) => {
+  const options = {
+    resource_type: 'raw',
+  };
+
+  try {
+    const result = await cloudinary.uploader.destroy(public_id, options);
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+module.exports = { uploadImage, deleteImages, deleteImage };
