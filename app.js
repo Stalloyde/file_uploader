@@ -56,10 +56,20 @@ app.use((err, req, res, next) => {
   console.log(err);
   if (err.code === 'P2002') {
     return res.json({ errors: [{ msg: '*Name is taken. Try another.' }] });
-  } else {
+  }
+
+  if (err.message === 'Unsupported ZIP file') {
     return res.json({
-      errors: [{ msg: '*Something went wrong. Refresh page and try again.' }],
+      errors: [
+        {
+          msg: '*File format not supported. Only (.png/.jpeg/.jpg) are supported.',
+        },
+      ],
     });
   }
+
+  return res.json({
+    errors: [{ msg: '*Something went wrong. Refresh page and try again.' }],
+  });
 });
 module.exports = app;
