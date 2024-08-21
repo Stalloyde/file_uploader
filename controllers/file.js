@@ -1,7 +1,8 @@
+const expressAsyncHandler = require('express-async-handler');
+const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { format } = require('date-fns');
-const expressAsyncHandler = require('express-async-handler');
 const { deleteImage } = require('../config/cloudinary');
 
 exports.allFilesGET = expressAsyncHandler(async (req, res) => {
@@ -38,9 +39,28 @@ exports.targetFileGET = expressAsyncHandler(async (req, res) => {
   }
 });
 
-exports.editFile = (req, res) => {
-  res.json('Edit file');
-};
+exports.editFile = [
+  body('newFileName')
+    .trim()
+    .notEmpty()
+    .escape()
+    .withMessage('*Input cannot be empty or only whitespace'),
+
+  expressAsyncHandler(async (req, res) => {
+    const targetId = Number(req.params.fileId);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.json({ errors: errors.array() });
+    }
+
+    const updatedFile = await prisma.file.update({
+      where: { id: targetId },
+      data: { fileName: req.body.newFileName },
+    });
+    return res.json(updatedFile);
+  }),
+];
 
 exports.deleteFile = expressAsyncHandler(async (req, res) => {
   const targetFileId = Number(req.params.fileId);
