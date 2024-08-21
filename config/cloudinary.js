@@ -1,4 +1,5 @@
 const cloudinary = require('cloudinary').v2;
+const expressAsyncHandler = require('express-async-handler');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -7,7 +8,7 @@ cloudinary.config({
   secure: true,
 });
 
-const uploadImage = async (imagePath) => {
+const uploadImage = expressAsyncHandler(async (imagePath) => {
   // Use the uploaded file's name as the asset's public ID and
   // don't allow overwriting the asset with new versions
   //accept files other than images
@@ -15,45 +16,34 @@ const uploadImage = async (imagePath) => {
     use_filename: true,
     unique_filename: true,
     overwrite: false,
-    resource_type: 'auto',
+    resource_type: 'image',
+    flags: 'attachment',
   };
 
-  try {
-    // Upload the image
-    const result = await cloudinary.uploader.upload(imagePath, options);
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.error(error);
-  }
-};
+  // Upload the image
+  const result = await cloudinary.uploader.upload(imagePath, options);
+  console.log(result);
+  return result;
+});
 
-const deleteImages = async (public_ids) => {
+const deleteImages = expressAsyncHandler(async (public_ids) => {
   const options = {
-    resource_type: 'raw',
+    resource_type: 'image',
   };
 
-  try {
-    const result = await cloudinary.api.delete_resources(public_ids, options);
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.error(error);
-  }
-};
+  const result = await cloudinary.api.delete_resources(public_ids, options);
+  console.log(result);
+  return result;
+});
 
-const deleteImage = async (public_id) => {
+const deleteImage = expressAsyncHandler(async (public_id) => {
   const options = {
-    resource_type: 'raw',
+    resource_type: 'image',
   };
 
-  try {
-    const result = await cloudinary.uploader.destroy(public_id, options);
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.error(error);
-  }
-};
+  const result = await cloudinary.uploader.destroy(public_id, options);
+  console.log(result);
+  return result;
+});
 
 module.exports = { uploadImage, deleteImages, deleteImage };
