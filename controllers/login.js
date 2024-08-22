@@ -25,6 +25,12 @@ exports.login = [
 
       // NEED TO CALL req.login()!!!
       req.login(user, (next) => {
+        // Set a test cookie with SameSite and Secure attributes
+        res.cookie('sessionId', req.sessionID, {
+          maxAge: 1000 * 60 * 60 * 24, // 1 day
+          sameSite: 'none',
+          secure: true,
+        });
         return res.json('logged in');
       });
     })(req, res, next);
