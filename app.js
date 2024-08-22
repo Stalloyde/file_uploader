@@ -26,6 +26,11 @@ const corsOptions = {
   credentials: true,
 };
 
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 300,
+});
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -34,12 +39,6 @@ app.use(compression());
 app.use(helmet());
 app.use(limiter);
 app.use(express.static(path.join(__dirname, 'public')));
-
-const RateLimit = require('express-rate-limit');
-const limiter = RateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 300,
-});
 
 app.use(cors(corsOptions));
 app.use(
