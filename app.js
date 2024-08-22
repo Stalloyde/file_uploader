@@ -7,9 +7,11 @@ const logger = require('morgan');
 const compression = require('compression');
 const helmet = require('helmet');
 const passport = require('passport');
-const session = require('cookie-session');
+const session = require('express-session');
 const cors = require('cors');
 const RateLimit = require('express-rate-limit');
+const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
+const { PrismaClient } = require('@prisma/client');
 
 const signUpRouter = require('./routes/signup');
 const logInRouter = require('./routes/login');
@@ -48,6 +50,11 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24, // Equals 1 day (1 day * 24 hr/1 day * 60 min/1 hr * 60 sec/1 min * 1000 ms / 1 sec)
     },
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   }),
 );
 app.use(passport.initialize());
