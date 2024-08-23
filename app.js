@@ -22,7 +22,7 @@ const fileRouter = require('./routes/file');
 const app = express();
 
 // Trust the first proxy (useful for production setups behind proxies)
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
 const corsOptions = {
   origin: ['https://file-uploader-client.vercel.app', 'http://localhost:5173'],
@@ -55,11 +55,11 @@ app.use(
       sameSite: 'none',
       secure: (process.env.NODE_ENV = 'production'),
     },
-    store: new PrismaSessionStore(new PrismaClient(), {
-      checkPeriod: 2 * 60 * 1000, //ms
-      dbRecordIdIsSessionId: true,
-      dbRecordIdFunction: undefined,
-    }),
+    // store: new PrismaSessionStore(new PrismaClient(), {
+    //   checkPeriod: 2 * 60 * 1000, //ms
+    //   dbRecordIdIsSessionId: true,
+    //   dbRecordIdFunction: undefined,
+    // }),
   }),
 );
 app.use(passport.initialize());
