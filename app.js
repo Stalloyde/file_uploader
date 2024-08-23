@@ -10,8 +10,6 @@ const passport = require('passport');
 const session = require('express-session');
 const cors = require('cors');
 const RateLimit = require('express-rate-limit');
-const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
-const { PrismaClient } = require('@prisma/client');
 
 const signUpRouter = require('./routes/signup');
 const logInRouter = require('./routes/login');
@@ -55,11 +53,6 @@ app.use(
       sameSite: 'none',
       secure: (process.env.NODE_ENV = 'production'),
     },
-    // store: new PrismaSessionStore(new PrismaClient(), {
-    //   checkPeriod: 2 * 60 * 1000, //ms
-    //   dbRecordIdIsSessionId: true,
-    //   dbRecordIdFunction: undefined,
-    // }),
   }),
 );
 app.use(passport.initialize());
