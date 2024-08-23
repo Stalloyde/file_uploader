@@ -22,7 +22,7 @@ const fileRouter = require('./routes/file');
 const app = express();
 
 // Trust the first proxy (useful for production setups behind proxies)
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
 const corsOptions = {
   origin: ['https://file-uploader-client.vercel.app', 'http://localhost:5173'],
